@@ -30,7 +30,7 @@ mail from: 'sender@email.com', to: 'receiver@email.com', subject: 'this is an em
 
 ### Sending Mailgun variables
 
-You can [attach data to your messages](http://documentation.mailgun.com/user_manual.html#attaching-data-to-messages) that will be included in Mailgun webhooks:
+You can [attach variables to your messages](http://documentation.mailgun.com/user_manual.html#attaching-data-to-messages) that will be included in Mailgun webhooks:
 
 ```ruby
 email = mail(...)
