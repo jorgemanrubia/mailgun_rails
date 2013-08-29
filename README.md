@@ -1,6 +1,6 @@
 # rails_mailgun
 
-*rails_mailgun* is an Action Mailer adapter for using [Mailgun](http://www.mailgun.com/) in Rails apps.
+*rails_mailgun* is an Action Mailer adapter for using [Mailgun](http://www.mailgun.com/) in Rails apps. It uses the [Mailgun HTTP API](http://documentation.mailgun.com/api_reference.html) internally.
 
 ## Installing
 
