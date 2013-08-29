@@ -47,7 +47,7 @@ module Mailgun
       if rails_message.html_part
         rails_message.html_part.body.decoded
       else
-        rails_message.content_type == 'text/html' ? rails_message.body.decoded : nil
+        rails_message.content_type =~ /text\/html/ ? rails_message.body.decoded : nil
       end
     end
 
@@ -55,7 +55,7 @@ module Mailgun
       if rails_message.multipart?
         rails_message.text_part ? rails_message.text_part.body.decoded : nil
       else
-        rails_message.content_type == 'text/plain' ? rails_message.body.decoded : nil
+        rails_message.content_type =~ /text\/plain/ ? rails_message.body.decoded : nil
       end
     end
 
