@@ -1,4 +1,3 @@
-
 module Mailgun
   class Deliverer
 
@@ -16,23 +15,62 @@ module Mailgun
       self.settings[:api_key]
     end
 
-    def deliver!(email)
-      mailgun_message = {
-          :from => email.from,
-          :to => email.to,
-          :subject => email.subject,
-          :html => email.body.to_s
-      }
+    def deliver!(rails_message)
+      mailgun_message = prepare_mailgun_message_for(rails_message)
+      remove_empty_values mailgun_message
+      mailgun_client.send_message mailgun_message
+    end
 
-      mailgun_message['h:Reply-To'] = email.reply_to if email.reply_to
+    private
 
-      email.mailgun_variables.try(:each) do |name, value|
+    def prepare_mailgun_message_for(rails_message)
+      mailgun_message = build_basic_mailgun_message_from_rails_message rails_message
+
+      prepare_reply_to rails_message, mailgun_message if rails_message.reply_to
+      prepare_mailgun_variables rails_message, mailgun_message
+      prepare_mailgun_recipient_variables rails_message, mailgun_message
+
+      mailgun_message
+    end
+
+    def build_basic_mailgun_message_from_rails_message(rails_message)
+      {:from => rails_message.from, :to => rails_message.to, :subject => rails_message.subject,
+       :html => extract_html(rails_message), :text => extract_text(rails_message)}
+    end
+
+    def prepare_reply_to(rails_message, mailgun_message)
+      mailgun_message['h:Reply-To'] = rails_message.reply_to
+    end
+
+    # @see http://stackoverflow.com/questions/4868205/rails-mail-getting-the-body-as-plain-text
+    def extract_html(rails_message)
+      if rails_message.html_part
+        rails_message.html_part.body.decoded
+      else
+        rails_message.content_type == 'text/html' ? rails_message.body.decoded : nil
+      end
+    end
+
+    def extract_text(rails_message)
+      if rails_message.multipart?
+        rails_message.text_part ? rails_message.text_part.body.decoded : nil
+      else
+        rails_message.content_type == 'text/plain' ? rails_message.body.decoded : nil
+      end
+    end
+
+    def prepare_mailgun_variables(rails_message, mailgun_message)
+      rails_message.mailgun_variables.try(:each) do |name, value|
         mailgun_message["v:#{name}"] = value
       end
+    end
 
-      mailgun_message['recipient-variables'] = email.mailgun_recipient_variables.to_json if email.mailgun_recipient_variables
+    def prepare_mailgun_recipient_variables(rails_message, mailgun_message)
+      mailgun_message['recipient-variables'] = rails_message.mailgun_recipient_variables.to_json if rails_message.mailgun_recipient_variables
+    end
 
-      mailgun_client.send_message mailgun_message
+    def remove_empty_values(mailgun_message)
+      mailgun_message.delete_if { |key, value| value.nil? }
     end
 
     def mailgun_client
