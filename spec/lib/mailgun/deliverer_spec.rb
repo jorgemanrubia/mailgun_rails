@@ -22,7 +22,7 @@ describe Mailgun::Deliverer do
     end
 
     def self.basic_mail_message
-      Mail::Message.new(from: 'from@email.com', to: 'to@email.com', subject: 'some subject', body: 'the html body')
+      Mail::Message.new(from: 'from@email.com', to: 'to@email.com', subject: 'some subject', body: 'the html body', reply_to: 'reply@to.com')
     end
 
     def self.message_with_mailgun_variables
@@ -42,6 +42,7 @@ describe Mailgun::Deliverer do
           :from => basic_mail_message.from,
           :to => basic_mail_message.to,
           :subject => basic_mail_message.subject,
+          'h:Reply-To' => basic_mail_message.reply_to,
           :html => basic_mail_message.body.to_s
       }
     end
