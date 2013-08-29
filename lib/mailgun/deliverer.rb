@@ -1,3 +1,4 @@
+
 module Mailgun
   class Deliverer
 
@@ -20,17 +21,22 @@ module Mailgun
           :from => email.from,
           :to => email.to,
           :subject => email.subject,
-          :html => email.body
+          :html => email.body.to_s
       }
 
-      mailgun_message['h:Reply-To'] = email.reply_to
+      mailgun_message['h:Reply-To'] = email.reply_to if email.reply_to
+
       email.mailgun_variables.try(:each) do |name, value|
         mailgun_message["v:#{name}"] = value
       end
 
-      mailgun_message['recipient-variables'] = email.mailgun_recipient_variables.to_json
+      mailgun_message['recipient-variables'] = email.mailgun_recipient_variables.to_json if email.mailgun_recipient_variables
 
-      MailgunClient.send_message mailgun_message
+      mailgun_client.send_message mailgun_message
+    end
+
+    def mailgun_client
+      @maingun_client ||= Client.new(api_key, domain)
     end
   end
 end
