@@ -50,4 +50,6 @@ email.mailgun_recipient_variables = {'user_1@email.com': {id: 1}, 'user_2@email.
 
  - Sending attachments
 
+Pull requests are welcomed
+
 
