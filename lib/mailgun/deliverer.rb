@@ -23,13 +23,16 @@ module Mailgun
 
     def build_mailgun_message_for(rails_message)
       mailgun_message = build_basic_mailgun_message_for rails_message
-
-      prepare_reply_to rails_message, mailgun_message if rails_message.reply_to
-      prepare_mailgun_variables rails_message, mailgun_message
-      prepare_mailgun_recipient_variables rails_message, mailgun_message
+      transform_mailgun_attributes_from_rails rails_message, mailgun_message
       remove_empty_values mailgun_message
 
       mailgun_message
+    end
+
+    def transform_mailgun_attributes_from_rails(rails_message, mailgun_message)
+      transform_reply_to rails_message, mailgun_message if rails_message.reply_to
+      transform_mailgun_variables rails_message, mailgun_message
+      transform_mailgun_recipient_variables rails_message, mailgun_message
     end
 
     def build_basic_mailgun_message_for(rails_message)
@@ -37,7 +40,7 @@ module Mailgun
        :html => extract_html(rails_message), :text => extract_text(rails_message)}
     end
 
-    def prepare_reply_to(rails_message, mailgun_message)
+    def transform_reply_to(rails_message, mailgun_message)
       mailgun_message['h:Reply-To'] = rails_message.reply_to
     end
 
@@ -58,13 +61,13 @@ module Mailgun
       end
     end
 
-    def prepare_mailgun_variables(rails_message, mailgun_message)
+    def transform_mailgun_variables(rails_message, mailgun_message)
       rails_message.mailgun_variables.try(:each) do |name, value|
         mailgun_message["v:#{name}"] = value
       end
     end
 
-    def prepare_mailgun_recipient_variables(rails_message, mailgun_message)
+    def transform_mailgun_recipient_variables(rails_message, mailgun_message)
       mailgun_message['recipient-variables'] = rails_message.mailgun_recipient_variables.to_json if rails_message.mailgun_recipient_variables
     end
 
