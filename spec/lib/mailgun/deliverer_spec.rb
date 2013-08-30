@@ -14,66 +14,87 @@ describe Mailgun::Deliverer do
       Mailgun::Client.stub(:new).with(api_key, domain).and_return mailgun_client
     end
 
-    def self.it_should_invoke_mailgun_message(email, expected_mailgun_properties)
-      it "should invoke the mailgun client providing #{expected_mailgun_properties} when receiving #{email.inspect}" do
-        mailgun_client.should_receive(:send_message).with(expected_mailgun_properties)
-        Mailgun::Deliverer.new(api_key: api_key, domain: domain).deliver!(email)
-      end
+    it 'should invoke mailgun message transforming the basic email properties' do
+      check_mailgun_message basic_multipart_rails_message, basic_expected_mailgun_message
     end
 
-    def self.basic_multipart_mail_message
-      Mail::Message.new(common_message_properties.merge(content_type: 'multipart/alternative')) do
+    it 'should invoke mailgun message transforming the mail gun variables' do
+      check_mailgun_message message_with_mailgun_variables, basic_expected_mailgun_message.merge('v:foo' => 'bar')
+    end
+
+    it 'should invoke mailgun message transforming the recipient variables' do
+      check_mailgun_message message_with_mailgun_recipient_variables, basic_expected_mailgun_message.merge('recipient-variables' => {foo: 'bar'}.to_json)
+    end
+
+    it 'should send HTML only messages' do
+      check_mailgun_message html_rails_message, basic_expected_mailgun_message.except(:text)
+    end
+
+    it 'should send text only messages' do
+      check_mailgun_message text_rails_message, basic_expected_mailgun_message.except(:html)
+    end
+
+    def check_mailgun_message(rails_message, mailgun_message)
+      mailgun_client.should_receive(:send_message).with(mailgun_message)
+      Mailgun::Deliverer.new(api_key: api_key, domain: domain).deliver!(rails_message)
+    end
+
+    def basic_multipart_rails_message
+      this_example = self
+      Mail::Message.new(common_rails_message_properties.merge(content_type: 'multipart/alternative')) do
         html_part do
-          body '<span>the html content</span>'
+          body this_example.html_body
         end
 
         text_part do
-          body 'the text content'
+          body this_example.text_body
         end
       end
     end
 
-    def self.basic_html_message
-      Mail::Message.new(common_message_properties.merge(content_type: 'text/html', body: '<span>the html content</span>'))
+    def html_rails_message
+      Mail::Message.new(common_rails_message_properties.merge(content_type: 'text/html', body: html_body))
     end
 
-    def self.basic_text_message
-      Mail::Message.new(common_message_properties.merge(content_type: 'text/plain', body: 'the text content'))
+    def text_rails_message
+      Mail::Message.new(common_rails_message_properties.merge(content_type: 'text/plain', body: text_body))
     end
 
-    def self.common_message_properties
+    def common_rails_message_properties
       {from: 'from@email.com', to: 'to@email.com', subject: 'some subject', reply_to: 'reply@to.com', }
     end
 
-    def self.message_with_mailgun_variables
-      message = basic_multipart_mail_message
+    def message_with_mailgun_variables
+      message = basic_multipart_rails_message
       message.mailgun_variables = {foo: 'bar'}
       message
     end
 
-    def self.message_with_mailgun_recipient_variables
-      message = basic_multipart_mail_message
+    def message_with_mailgun_recipient_variables
+      message = basic_multipart_rails_message
       message.mailgun_recipient_variables = {foo: 'bar'}
       message
     end
 
-    def self.basic_expected_mailgun_message_properties
+    def basic_expected_mailgun_message
       {
-          :from => basic_multipart_mail_message.from,
-          :to => basic_multipart_mail_message.to,
-          :subject => basic_multipart_mail_message.subject,
-          'h:Reply-To' => basic_multipart_mail_message.reply_to,
-          :text => 'the text content',
-          :html => '<span>the html content</span>'
+          :from => [common_rails_message_properties[:from]],
+          :to => [common_rails_message_properties[:to]],
+          :subject => common_rails_message_properties[:subject],
+          'h:Reply-To' => [common_rails_message_properties[:reply_to]],
+          :text => text_body,
+          :html => html_body
       }
     end
-
-    it_should_invoke_mailgun_message basic_multipart_mail_message, basic_expected_mailgun_message_properties
-
-    it_should_invoke_mailgun_message message_with_mailgun_variables, basic_expected_mailgun_message_properties.merge('v:foo' => 'bar')
-
-    it_should_invoke_mailgun_message basic_html_message, basic_expected_mailgun_message_properties.except(:text)
-
-    it_should_invoke_mailgun_message basic_text_message, basic_expected_mailgun_message_properties.except(:html)
   end
+
+  def html_body
+    '<span>the html content</span>'
+  end
+
+  def text_body
+    'the text content'
+  end
+
+
 end
