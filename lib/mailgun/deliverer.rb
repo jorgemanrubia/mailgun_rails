@@ -16,14 +16,14 @@ module Mailgun
     end
 
     def deliver!(rails_message)
-      mailgun_message = prepare_mailgun_message_for(rails_message)
+      mailgun_message = build_mailgun_message_for(rails_message)
       remove_empty_values mailgun_message
       mailgun_client.send_message mailgun_message
     end
 
     private
 
-    def prepare_mailgun_message_for(rails_message)
+    def build_mailgun_message_for(rails_message)
       mailgun_message = build_basic_mailgun_message_from_rails_message rails_message
 
       prepare_reply_to rails_message, mailgun_message if rails_message.reply_to
