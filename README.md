@@ -16,7 +16,7 @@ To configure your Mailgun credentials place the following code in the correspond
 
 ```ruby
 config.action_mailer.delivery_method = :mailgun
-ActionMailer::Base.mailgun_settings = {
+config.action_mailer.mailgun_settings = {
 		api_key: '<mailgun api key>',
 		domain: '<mailgun domain>'
 }
