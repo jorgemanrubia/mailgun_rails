@@ -22,7 +22,7 @@ module Mailgun
     private
 
     def build_mailgun_message_for(rails_message)
-      mailgun_message = build_basic_mailgun_message_from_rails_message rails_message
+      mailgun_message = build_basic_mailgun_message_for rails_message
 
       prepare_reply_to rails_message, mailgun_message if rails_message.reply_to
       prepare_mailgun_variables rails_message, mailgun_message
@@ -32,7 +32,7 @@ module Mailgun
       mailgun_message
     end
 
-    def build_basic_mailgun_message_from_rails_message(rails_message)
+    def build_basic_mailgun_message_for(rails_message)
       {:from => rails_message.from, :to => rails_message.to, :subject => rails_message.subject,
        :html => extract_html(rails_message), :text => extract_text(rails_message)}
     end
