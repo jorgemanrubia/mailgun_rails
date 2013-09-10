@@ -34,7 +34,7 @@ You can [attach variables to your messages](http://documentation.mailgun.com/use
 
 ```ruby
 email = mail(...)
-email.mailgun_variables = {name_1: :value_1, :name_2 => value_2}
+email.mailgun_variables = {name_1: :value_1, name_2: value_2}
 ```
 
 ### Sending Recipient Variables
