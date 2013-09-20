@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     mailgun_rails (0.5.3)
-      rails (~> 3.2.13)
+      rails (>= 3.2.13)
       rest-client (~> 1.6.7)
 
 GEM
@@ -47,7 +47,7 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     mime-types (1.24)
-    multi_json (1.7.9)
+    multi_json (1.8.0)
     polyglot (0.3.3)
     rack (1.4.5)
     rack-cache (1.2)
