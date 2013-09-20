@@ -7,7 +7,7 @@
 In your `Gemfile`
 
 ```ruby
-gem 'rails_mailgun'
+gem 'mailgun_rails'
 ```
 
 ## Usage
