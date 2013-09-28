@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/jorgemanrubia/mailgun_rails/"
   s.summary     = "Rails Action Mailer adapter for Mailgun"
   s.description = "An adapter for using Mailgun with Rails and Action Mailer"
+  s.license = 'MIT'
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["test/**/*"]
