@@ -34,6 +34,10 @@ describe Mailgun::Deliverer do
       check_mailgun_message text_rails_message, basic_expected_mailgun_message.except(:html)
     end
 
+    it 'should include sender and recipient names in from field' do
+      check_mailgun_message text_rails_message_with_names, basic_expected_mailgun_message.except(:html).merge(emails_with_names)
+    end
+
     def check_mailgun_message(rails_message, mailgun_message)
       mailgun_client.should_receive(:send_message).with(mailgun_message)
       Mailgun::Deliverer.new(api_key: api_key, domain: domain).deliver!(rails_message)
@@ -58,6 +62,14 @@ describe Mailgun::Deliverer do
 
     def text_rails_message
       Mail::Message.new(common_rails_message_properties.merge(content_type: 'text/plain', body: text_body))
+    end
+
+    def text_rails_message_with_names
+      Mail::Message.new(common_rails_message_properties.merge(content_type: 'text/plain', body: text_body).merge(emails_with_names))
+    end
+
+    def emails_with_names
+      {from: ['Sender <from@email.com>'], to: ['Receiver <to@email.com>', 'Another one <to2@email.com>']}
     end
 
     def common_rails_message_properties
