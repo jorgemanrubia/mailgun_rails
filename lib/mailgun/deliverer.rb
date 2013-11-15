@@ -36,7 +36,7 @@ module Mailgun
     end
 
     def build_basic_mailgun_message_for(rails_message)
-      {:from => rails_message.from, :to => rails_message.to, :subject => rails_message.subject,
+      {:from => rails_message[:from].formatted, :to => rails_message[:to].formatted, :subject => rails_message.subject,
        :html => extract_html(rails_message), :text => extract_text(rails_message)}
     end
 
