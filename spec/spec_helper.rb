@@ -9,6 +9,8 @@ require 'mailgun/mail_ext'
 
 require 'action_mailer'
 
+require File.expand_path("../dummy/config/environment.rb",  __FILE__)
+
 RSpec.configure do |config|
 
   config.treat_symbols_as_metadata_keys_with_true_values = true
