@@ -93,7 +93,7 @@ describe Mailgun::Deliverer do
           :from => [common_rails_message_properties[:from]],
           :to => [common_rails_message_properties[:to]],
           :subject => common_rails_message_properties[:subject],
-          'h:Reply-To' => [common_rails_message_properties[:reply_to]],
+          'h:Reply-To' => common_rails_message_properties[:reply_to],
           :text => text_body,
           :html => html_body
       }
