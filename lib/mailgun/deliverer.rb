@@ -69,7 +69,7 @@ module Mailgun
     end
 
     def transform_custom_headers(rails_message, mailgun_message)
-      rails_message.headers.try(:each) do |name, value|
+      rails_message.mailgun_headers.try(:each) do |name, value|
         mailgun_message["h:#{name}"] = value
       end
     end
