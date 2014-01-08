@@ -43,7 +43,7 @@ Mailgun supports [Batch sending](http://documentation.mailgun.com/user_manual.ht
 
 ```ruby
 email = mail(...)
-email.mailgun_recipient_variables = {'user_1@email.com': {id: 1}, 'user_2@email.com': {id: 2}}
+email.mailgun_recipient_variables = {'user_1@email.com' => {id: 1}, 'user_2@email.com' => {id: 2}}
 ```
 
 ## Pending
