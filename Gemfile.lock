@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    mailgun_rails (0.5.6)
+    mailgun_rails (0.6.0)
       rails (>= 3.2.13)
       rest-client (~> 1.6.7)
 
@@ -62,7 +62,7 @@ GEM
       activesupport (= 4.0.2)
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
-    rake (10.1.0)
+    rake (10.1.1)
     rest-client (1.6.7)
       mime-types (>= 1.16)
     rspec (2.14.1)
