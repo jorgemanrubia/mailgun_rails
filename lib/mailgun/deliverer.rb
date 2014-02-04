@@ -30,7 +30,7 @@ module Mailgun
     end
 
     def transform_mailgun_attributes_from_rails(rails_message, mailgun_message)
-      transform_reply_to rails_message, mailgun_message if rails_message.reply_to
+      transform_email_headers rails_message, mailgun_message
       transform_mailgun_variables rails_message, mailgun_message
       transform_mailgun_recipient_variables rails_message, mailgun_message
       transform_custom_headers rails_message, mailgun_message
@@ -41,8 +41,9 @@ module Mailgun
        :html => extract_html(rails_message), :text => extract_text(rails_message)}
     end
 
-    def transform_reply_to(rails_message, mailgun_message)
-      mailgun_message['h:Reply-To'] = rails_message.reply_to.first
+    def transform_email_headers(rails_message, mailgun_message)
+      mailgun_message['h:Reply-To'] = rails_message.reply_to.first if rails_message.reply_to
+      mailgun_message['h:Message-ID'] = rails_message.message_id if rails_message.message_id
     end
 
     # @see http://stackoverflow.com/questions/4868205/rails-mail-getting-the-body-as-plain-text
