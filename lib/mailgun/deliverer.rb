@@ -37,8 +37,28 @@ module Mailgun
     end
 
     def build_basic_mailgun_message_for(rails_message)
-      {:from => rails_message[:from].formatted, :to => rails_message[:to].formatted, :subject => rails_message.subject,
-       :html => extract_html(rails_message), :text => extract_text(rails_message)}
+      mailgun_message = {
+        :from => rails_message[:from].formatted, 
+        :to => rails_message[:to].formatted, 
+        :subject => rails_message.subject,
+        :html => extract_html(rails_message), 
+        :text => extract_text(rails_message),
+        :attachment => []
+      }
+
+      # RestClient requires attachments to be in file format, use a temp directory and the decoded attachment
+      rails_message.attachments.each do |attachment|
+        # file needs its original name
+        fname = "#{Dir.tmpdir}/#{attachment.filename}"
+
+        # write the file to temp
+        File.open(fname, 'wb') {|f| f.write(attachment.decoded)}
+
+        # then add as a file object
+        mailgun_message[:attachment] << File.new(fname)
+      end
+
+      return mailgun_message
     end
 
     def transform_email_headers(rails_message, mailgun_message)
