@@ -16,7 +16,8 @@ module Mailgun
     end
 
     def deliver!(rails_message)
-      mailgun_client.send_message build_mailgun_message_for(rails_message)
+      domain_override = rails_message['X-Domain-Override']
+      mailgun_client(domain_override).send_message build_mailgun_message_for(rails_message)
     end
 
     private
@@ -103,8 +104,8 @@ module Mailgun
       mailgun_message.delete_if { |key, value| value.nil? }
     end
 
-    def mailgun_client
-      @maingun_client ||= Client.new(api_key, domain)
+    def mailgun_client(domain_override = nil)
+      @maingun_client ||= Client.new(api_key, domain_override || domain)
     end
   end
 end
