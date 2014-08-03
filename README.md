@@ -45,6 +45,12 @@ email.mailgun_recipient_variables = {'user_1@email.com' => {id: 1}, 'user_2@emai
 ```ruby
 email.mailgun_headers = {foo: 'bar'}
 ```
+
+### [Operations](For example tagging: http://documentation.mailgun.com/user_manual.html#tagging)
+
+```ruby
+email.mailgun_operations = {tag: 'my new tag'}
+```
 ## Pending
 
  - Sending attachments
