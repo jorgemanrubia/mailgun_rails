@@ -16,7 +16,8 @@ module Mailgun
     end
 
     def deliver!(rails_message)
-      mailgun_client.send_message build_mailgun_message_for(rails_message)
+      domain_override = rails_message['X-Domain-Override']
+      mailgun_client(domain_override).send_message build_mailgun_message_for(rails_message)
     end
 
     private
@@ -30,19 +31,40 @@ module Mailgun
     end
 
     def transform_mailgun_attributes_from_rails(rails_message, mailgun_message)
-      transform_reply_to rails_message, mailgun_message if rails_message.reply_to
+      transform_email_headers rails_message, mailgun_message
       transform_mailgun_variables rails_message, mailgun_message
       transform_mailgun_recipient_variables rails_message, mailgun_message
       transform_custom_headers rails_message, mailgun_message
     end
 
     def build_basic_mailgun_message_for(rails_message)
-      {:from => rails_message[:from].formatted, :to => rails_message[:to].formatted, :subject => rails_message.subject,
-       :html => extract_html(rails_message), :text => extract_text(rails_message)}
+      mailgun_message = {
+        :from => rails_message[:from].formatted, 
+        :to => rails_message[:to].formatted, 
+        :subject => rails_message.subject,
+        :html => extract_html(rails_message), 
+        :text => extract_text(rails_message),
+        :attachment => []
+      }
+
+      # RestClient requires attachments to be in file format, use a temp directory and the decoded attachment
+      rails_message.attachments.each do |attachment|
+        # file needs its original name
+        fname = "#{Dir.tmpdir}/#{attachment.filename}"
+
+        # write the file to temp
+        File.open(fname, 'wb') {|f| f.write(attachment.decoded)}
+
+        # then add as a file object
+        mailgun_message[:attachment] << File.new(fname)
+      end
+
+      return mailgun_message
     end
 
-    def transform_reply_to(rails_message, mailgun_message)
-      mailgun_message['h:Reply-To'] = rails_message.reply_to.first
+    def transform_email_headers(rails_message, mailgun_message)
+      mailgun_message['h:Reply-To'] = rails_message.reply_to.first if rails_message.reply_to
+      mailgun_message['h:Message-ID'] = rails_message.message_id if rails_message.message_id
     end
 
     # @see http://stackoverflow.com/questions/4868205/rails-mail-getting-the-body-as-plain-text
@@ -82,8 +104,8 @@ module Mailgun
       mailgun_message.delete_if { |key, value| value.nil? }
     end
 
-    def mailgun_client
-      @maingun_client ||= Client.new(api_key, domain)
+    def mailgun_client(domain_override = nil)
+      @maingun_client ||= Client.new(api_key, domain_override || domain)
     end
   end
 end
