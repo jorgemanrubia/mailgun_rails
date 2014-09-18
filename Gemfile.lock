@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    mailgun_rails (0.6.1)
+    mailgun_rails (0.6.2)
       rails (>= 3.2.13)
       rest-client (>= 1.6.7)
 
