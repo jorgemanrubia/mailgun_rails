@@ -40,9 +40,9 @@ module Mailgun
       {:from => rails_message[:from].formatted, :to => rails_message[:to].formatted, :subject => rails_message.subject,
        :html => extract_html(rails_message), :text => extract_text(rails_message)}
     end
-
+    
     def transform_reply_to(rails_message, mailgun_message)
-      mailgun_message['h:Reply-To'] = rails_message.reply_to.first
+      mailgun_message['h:Reply-To'] = rails_message[:reply_to].formatted.first
     end
 
     # @see http://stackoverflow.com/questions/4868205/rails-mail-getting-the-body-as-plain-text

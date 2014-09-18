@@ -42,6 +42,16 @@ describe Mailgun::Deliverer do
       check_mailgun_message text_rails_message_with_names, basic_expected_mailgun_message.except(:html).merge(emails_with_names)
     end
 
+    it 'should include reply-to name in custom header' do
+      msg = Mail::Message.new(to: 'to@email.com',
+                              from: 'from@email.com',
+                              reply_to: 'Reply User <replyto@email.com>')
+      expectation = { to: ['to@email.com'],
+                      from: ['from@email.com'],
+                      'h:Reply-To' => 'Reply User <replyto@email.com>' }
+      check_mailgun_message msg, expectation
+    end
+
     def check_mailgun_message(rails_message, mailgun_message)
       mailgun_client.should_receive(:send_message).with(mailgun_message)
       Mailgun::Deliverer.new(api_key: api_key, domain: domain).deliver!(rails_message)
@@ -117,6 +127,4 @@ describe Mailgun::Deliverer do
   def text_body
     'the text content'
   end
-
-
 end
