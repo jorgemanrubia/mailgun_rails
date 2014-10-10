@@ -23,11 +23,17 @@ describe Mailgun::Deliverer do
     end
 
     it 'should invoke mailgun message transforming the custom headers' do
-      check_mailgun_message message_with_custom_headers, basic_expected_mailgun_message.merge('h:foo' => 'bar')
+      message = message_with_custom_headers
+      check_mailgun_message message, basic_expected_mailgun_message.merge('h:foo' => 'bar', 'h:X-baz' => 'qux')
     end
 
     it 'should invoke mailgun message transforming the recipient variables' do
       check_mailgun_message message_with_mailgun_recipient_variables, basic_expected_mailgun_message.merge('recipient-variables' => {foo: 'bar'}.to_json)
+    end
+
+    it 'should invoke mailgun message transforming on the options' do
+      message = message_with_options
+      check_mailgun_message message, basic_expected_mailgun_message.merge('o:campaign' => 1, 'o:tracking' => 'no')
     end
 
     it 'should send HTML only messages' do
@@ -99,6 +105,14 @@ describe Mailgun::Deliverer do
     def message_with_custom_headers
       message = basic_multipart_rails_message
       message.mailgun_headers = {foo: 'bar'}
+      message.headers({'X-baz' => 'qux'})
+      message
+    end
+
+    def message_with_options
+      message = basic_multipart_rails_message
+      message.mailgun_options = {campaign: 1}
+      message.headers({'X-Mailgun-Track' => 'no'})
       message
     end
 
