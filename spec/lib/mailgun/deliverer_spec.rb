@@ -51,6 +51,10 @@ describe Mailgun::Deliverer do
                       'h:Reply-To' => 'Reply User <replyto@email.com>' }
       check_mailgun_message msg, expectation
     end
+    
+    it 'should include headers of type o: like o:campaign' do
+      check_mailgun_message message_with_custom_o_headers, basic_expected_mailgun_message.merge('o:campaign' => '1')
+    end
 
     def check_mailgun_message(rails_message, mailgun_message)
       mailgun_client.should_receive(:send_message).with(mailgun_message)
@@ -99,6 +103,12 @@ describe Mailgun::Deliverer do
     def message_with_custom_headers
       message = basic_multipart_rails_message
       message.mailgun_headers = {foo: 'bar'}
+      message
+    end
+    
+    def message_with_custom_o_headers
+      message = basic_multipart_rails_message
+      message.mailgun_o_headers = {campaign: '1'}
       message
     end
 

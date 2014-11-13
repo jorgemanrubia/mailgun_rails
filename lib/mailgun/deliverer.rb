@@ -34,6 +34,7 @@ module Mailgun
       transform_mailgun_variables rails_message, mailgun_message
       transform_mailgun_recipient_variables rails_message, mailgun_message
       transform_custom_headers rails_message, mailgun_message
+      transform_o_headers rails_message, mailgun_message
     end
 
     def build_basic_mailgun_message_for(rails_message)
@@ -71,6 +72,12 @@ module Mailgun
     def transform_custom_headers(rails_message, mailgun_message)
       rails_message.mailgun_headers.try(:each) do |name, value|
         mailgun_message["h:#{name}"] = value
+      end
+    end
+    
+    def transform_o_headers(rails_message, mailgun_message)
+      rails_message.mailgun_o_headers.try(:each) do |name, value|
+        mailgun_message["o:#{name}"] = value
       end
     end
 
