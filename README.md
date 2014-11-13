@@ -46,12 +46,12 @@ email.mailgun_recipient_variables = {'user_1@email.com' => {id: 1}, 'user_2@emai
 email.mailgun_headers = {foo: 'bar'}
 ```
 
-### Parameters
+### Mailgun options
 
 To provide option parameters like `o:campaign` or `o:tag`.
 
 ```ruby
-email.mailgun_o_headers = {campaign: '1'}
+email.mailgun_options = {campaign: '1'}
 ```
 
 ## Pending
