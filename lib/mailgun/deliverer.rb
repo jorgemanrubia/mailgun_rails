@@ -32,6 +32,7 @@ module Mailgun
     def transform_mailgun_attributes_from_rails(rails_message, mailgun_message)
       transform_reply_to rails_message, mailgun_message if rails_message.reply_to
       transform_mailgun_variables rails_message, mailgun_message
+      transform_mailgun_options rails_message, mailgun_message
       transform_mailgun_recipient_variables rails_message, mailgun_message
       transform_custom_headers rails_message, mailgun_message
     end
@@ -40,7 +41,7 @@ module Mailgun
       {:from => rails_message[:from].formatted, :to => rails_message[:to].formatted, :subject => rails_message.subject,
        :html => extract_html(rails_message), :text => extract_text(rails_message)}
     end
-    
+
     def transform_reply_to(rails_message, mailgun_message)
       mailgun_message['h:Reply-To'] = rails_message[:reply_to].formatted.first
     end
@@ -65,6 +66,12 @@ module Mailgun
     def transform_mailgun_variables(rails_message, mailgun_message)
       rails_message.mailgun_variables.try(:each) do |name, value|
         mailgun_message["v:#{name}"] = value
+      end
+    end
+
+    def transform_mailgun_options(rails_message, mailgun_message)
+      rails_message.mailgun_options.try(:each) do |name, value|
+        mailgun_message["o:#{name}"] = value
       end
     end
 

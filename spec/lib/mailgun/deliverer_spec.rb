@@ -22,6 +22,10 @@ describe Mailgun::Deliverer do
       check_mailgun_message message_with_mailgun_variables, basic_expected_mailgun_message.merge('v:foo' => 'bar')
     end
 
+    it 'should invoke mailgun message transforming the mailgun options' do
+      check_mailgun_message message_with_mailgun_options, basic_expected_mailgun_message.merge('o:foo' => 'bar')
+    end
+
     it 'should invoke mailgun message transforming the custom headers' do
       check_mailgun_message message_with_custom_headers, basic_expected_mailgun_message.merge('h:foo' => 'bar')
     end
@@ -93,6 +97,12 @@ describe Mailgun::Deliverer do
     def message_with_mailgun_variables
       message = basic_multipart_rails_message
       message.mailgun_variables = {foo: 'bar'}
+      message
+    end
+
+    def message_with_mailgun_options
+      message = basic_multipart_rails_message
+      message.mailgun_options = {foo: 'bar'}
       message
     end
 
