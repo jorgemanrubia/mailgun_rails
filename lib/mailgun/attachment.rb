@@ -1,9 +1,10 @@
 module Mailgun
-  class Attachment < Tempfile
-    attr_reader :original_filename, :content_type
+  class Attachment < StringIO
+    attr_reader :original_filename, :content_type, :path
 
     def initialize (attachment, *rest)
-      if rest.select {|opt| opt[:inline] }
+      @path = ''
+      if rest.detect {|opt| opt[:inline] }
         basename = @original_filename = attachment.cid
       else
         basename = @original_filename = attachment.filename
