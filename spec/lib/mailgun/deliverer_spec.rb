@@ -56,9 +56,58 @@ describe Mailgun::Deliverer do
       check_mailgun_message msg, expectation
     end
 
+
+    it 'should include attachment' do
+      rails_message = rails_message_with_attachment
+      attachment = double(Mailgun::Attachment)
+      Mailgun::Attachment.stub(:new).with(rails_message.attachments.first, encoding: 'ascii-8bit').and_return attachment
+      expectation = basic_expected_mailgun_message.merge({inline: []})
+      expectation[:attachment] = [attachment]
+      check_mailgun_message rails_message, expectation
+    end
+
+    it 'should include inline attachment' do
+      rails_message = rails_message_with_inline_attachment
+      attachment = double(Mailgun::Attachment)
+      Mailgun::Attachment.stub(:new).with(rails_message.attachments.first, encoding: 'ascii-8bit', inline: true).and_return attachment
+      expectation = basic_expected_mailgun_message.merge({attachment: []})
+      expectation[:inline] = [attachment]
+      check_mailgun_message rails_message, expectation
+    end
+
+    it 'should include attachment of both types' do
+      rails_message = rails_message_with_both_types_attachments
+      attachment = double(Mailgun::Attachment)
+      Mailgun::Attachment.stub(:new).with(rails_message.attachments.first, encoding: 'ascii-8bit', inline: true).and_return attachment
+      Mailgun::Attachment.stub(:new).with(rails_message.attachments.last, encoding: 'ascii-8bit').and_return attachment
+      expectation = basic_expected_mailgun_message
+      expectation[:inline] = [attachment]
+      expectation[:attachment] = [attachment]
+      check_mailgun_message rails_message, expectation
+    end
+
     def check_mailgun_message(rails_message, mailgun_message)
       mailgun_client.should_receive(:send_message).with(mailgun_message)
       Mailgun::Deliverer.new(api_key: api_key, domain: domain).deliver!(rails_message)
+    end
+
+    def rails_message_with_attachment
+      msg = basic_multipart_rails_message
+      msg.attachments["attachment.jpg"] = "\312\213\254\232"
+      msg
+    end
+
+    def rails_message_with_inline_attachment
+      msg = basic_multipart_rails_message
+      msg.attachments.inline["attachment.jpg"] = "\312\213\254\232"
+      msg
+    end
+
+    def rails_message_with_both_types_attachments
+      msg = basic_multipart_rails_message
+      msg.attachments.inline["attachment.jpg"] = "\312\213\254\232"
+      msg.attachments["attachment.png"] = "\312\213\254\232"
+      msg
     end
 
     def basic_multipart_rails_message
