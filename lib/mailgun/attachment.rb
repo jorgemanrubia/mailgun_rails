@@ -1,10 +1,11 @@
+require 'byebug'
 module Mailgun
   class Attachment < StringIO
     attr_reader :original_filename, :content_type, :path
 
     def initialize (attachment, *rest)
       @path = ''
-      if rest.select {|opt| opt[:inline] }
+      if rest.detect {|opt| opt[:inline] }
         basename = @original_filename = attachment.cid
       else
         basename = @original_filename = attachment.filename
