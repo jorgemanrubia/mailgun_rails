@@ -1,4 +1,3 @@
-require 'byebug'
 module Mailgun
   class Attachment < StringIO
     attr_reader :original_filename, :content_type, :path
