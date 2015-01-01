@@ -38,8 +38,28 @@ module Mailgun
     end
 
     def build_basic_mailgun_message_for(rails_message)
-      {:from => rails_message[:from].formatted, :to => rails_message[:to].formatted, :subject => rails_message.subject,
-       :html => extract_html(rails_message), :text => extract_text(rails_message)}
+      mailgun_message = {
+       from: rails_message[:from].formatted,
+       to: rails_message[:to].formatted,
+       subject: rails_message.subject,
+       html: extract_html(rails_message),
+       text: extract_text(rails_message)
+      }
+      return mailgun_message if rails_message.attachments.empty?
+
+      # RestClient requires attachments to be in file format, use a temp directory and the decoded attachment
+      mailgun_message[:attachment] = []
+      mailgun_message[:inline] = []
+      rails_message.attachments.each do |attachment|
+        # then add as a file object
+        if attachment.inline?
+          mailgun_message[:inline] << Mailgun::Attachment.new(attachment, encoding: 'ascii-8bit', inline: true)
+        else
+          mailgun_message[:attachment] << Mailgun::Attachment.new(attachment, encoding: 'ascii-8bit')
+        end
+      end
+
+      return mailgun_message
     end
 
     def transform_reply_to(rails_message, mailgun_message)
