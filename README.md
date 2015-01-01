@@ -56,10 +56,6 @@ To provide option parameters like `o:campaign` or `o:tag`.
 email.mailgun_options = {campaign: '1'}
 ```
 
-## Pending
-
- - Sending attachments
-
 Pull requests are welcomed
 
 
