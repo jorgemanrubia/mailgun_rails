@@ -7,6 +7,8 @@ describe Mailgun::Attachment do
       @mail = Mail.new()
       @mail.attachments["attachment.png"] = "\312\213\254\232"
       @mail.attachments.inline["attachment2.png"] = "\312\213\254\232"
+      @mail.attachments["attachment.json"] = { mime_type: 'application/json', content: {cool: 'json'}.to_json }
+
     end
 
     it 'should respond to rest_client api' do
@@ -25,6 +27,11 @@ describe Mailgun::Attachment do
     it 'should set filename as original_filename' do
       attachment = Mailgun::Attachment.new(@mail.attachments.first)
       attachment.original_filename.should eq(@mail.attachments.first.filename)
+    end
+
+    it 'should set filename as original_filename for hash' do
+      attachment = Mailgun::Attachment.new(@mail.attachments.last)
+      attachment.original_filename.should eq(@mail.attachments.last.filename)
     end
   end
 end

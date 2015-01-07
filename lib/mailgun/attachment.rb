@@ -10,10 +10,7 @@ module Mailgun
         basename = @original_filename = attachment.filename
       end
       @content_type = attachment.content_type.split(';')[0]
-      super basename, *rest
-      binmode
-      write attachment.body.decoded
-      rewind
+      super attachment.body.decoded
     end
   end
 end
