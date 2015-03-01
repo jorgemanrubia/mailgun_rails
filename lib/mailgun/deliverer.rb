@@ -45,6 +45,11 @@ module Mailgun
        html: extract_html(rails_message),
        text: extract_text(rails_message)
       }
+
+      [:cc, :bcc].each do |key|
+        mailgun_message[key] = rails_message[key].formatted if rails_message[key]
+      end
+
       return mailgun_message if rails_message.attachments.empty?
 
       # RestClient requires attachments to be in file format, use a temp directory and the decoded attachment
