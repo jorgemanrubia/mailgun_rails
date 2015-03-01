@@ -46,6 +46,28 @@ describe Mailgun::Deliverer do
       check_mailgun_message text_rails_message_with_names, basic_expected_mailgun_message.except(:html).merge(emails_with_names)
     end
 
+    it "should include cc if present" do
+      msg = Mail::Message.new(to: 'to@email.com',
+                              from: 'from@email.com',
+                              cc: 'cc@email.com')
+      expectation = { to: ['to@email.com'],
+                      from: ['from@email.com'],
+                      cc: ['cc@email.com'] }
+      check_mailgun_message msg, expectation
+
+    end
+
+    it "should include bcc if present" do
+      msg = Mail::Message.new(to: 'to@email.com',
+                              from: 'from@email.com',
+                              bcc: 'bcc@email.com')
+      expectation = { to: ['to@email.com'],
+                      from: ['from@email.com'],
+                      bcc: ['bcc@email.com'] }
+      check_mailgun_message msg, expectation
+
+    end
+
     it 'should include reply-to name in custom header' do
       msg = Mail::Message.new(to: 'to@email.com',
                               from: 'from@email.com',
