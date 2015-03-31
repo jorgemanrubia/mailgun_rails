@@ -122,6 +122,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activerecord-jdbcsqlite3-adapter
   mailgun_rails!
   rspec (~> 2.14.1)
   sqlite3

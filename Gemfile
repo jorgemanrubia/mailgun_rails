@@ -5,3 +5,5 @@ source "https://rubygems.org"
 # development dependencies will be added by default to the :development group.
 gemspec
 
+gem 'sqlite3', platform: :ruby
+gem 'activerecord-jdbcsqlite3-adapter', platform: :jruby

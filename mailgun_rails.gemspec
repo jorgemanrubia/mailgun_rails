@@ -20,6 +20,5 @@ Gem::Specification.new do |s|
   s.add_dependency "rails", ">= 3.2.13"
   s.add_dependency "rest-client", ">= 1.6.7"
 
-  s.add_development_dependency "sqlite3"
   s.add_development_dependency "rspec", '~> 2.14.1'
 end
