@@ -6,7 +6,7 @@ describe Mailgun::Client do
 
   describe "#send_message" do
     it 'should make a POST rest request passing the parameters to the mailgun end point' do
-      expected_url = "https://api:some_api_key@api.mailgun.net/v2/some_domain/messages"
+      expected_url = "https://api:some_api_key@api.mailgun.net/v3/some_domain/messages"
       RestClient.should_receive(:post).with(expected_url, foo: :bar)
       client.send_message foo: :bar
     end

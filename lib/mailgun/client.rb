@@ -19,7 +19,7 @@ module Mailgun
     end
 
     def api_url
-      "https://api:#{api_key}@api.mailgun.net/v2/#{domain}"
+      "https://api:#{api_key}@api.mailgun.net/v3/#{domain}"
     end
   end
 end
