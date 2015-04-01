@@ -16,7 +16,5 @@ matrix:
       gemfile: .gemfiles/rails4_0.gemfile
     - rvm: 2.2
       gemfile: .gemfiles/rails4_1.gemfile
-    - rvm: 2.2
-      gemfile: .gemfiles/rails4_2.gemfile
   allow_failures:
     - rvm: rbx
