@@ -115,7 +115,7 @@ module Mailgun
     end
 
     def mailgun_client
-      @maingun_client ||= Client.new(api_key, domain)
+      @mailgun_client ||= Client.new(api_key, domain)
     end
   end
 end
