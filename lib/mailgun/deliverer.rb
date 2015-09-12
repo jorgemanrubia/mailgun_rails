@@ -1,5 +1,3 @@
-require 'json'
-
 module Mailgun
   class Deliverer
 
@@ -29,9 +27,7 @@ module Mailgun
     end
 
     def deliver!(rails_message)
-      response = mailgun_client.send_message build_mailgun_message_for(rails_message)
-      response = JSON.parse(response)
-      rails_message.mailgun_id = response['id']
+      mailgun_client.send_message build_mailgun_message_for(rails_message)
     end
 
     private
