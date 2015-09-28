@@ -108,8 +108,16 @@ describe Mailgun::Deliverer do
       check_mailgun_message rails_message, expectation
     end
 
+    it "should update the Mail::Message#message_id with the id returned from mailgun" do
+      msg = Mail::Message.new(to: 'to@email.com', from: 'from@email.com')
+      expectation = { to: ['to@email.com'], from: ['from@email.com']}
+      check_mailgun_message msg, expectation
+      msg.message_id.should eq "20111114174239.25659.5817@samples.mailgun.org"
+    end
+
     def check_mailgun_message(rails_message, mailgun_message)
-      mailgun_client.should_receive(:send_message).with(mailgun_message)
+      rest_response = double(:code => 200, :to_str => '{"message": "Queued. Thank you.","id": "<20111114174239.25659.5817@samples.mailgun.org>"}')
+      mailgun_client.should_receive(:send_message).with(mailgun_message).and_return(rest_response)
       Mailgun::Deliverer.new(api_key: api_key, domain: domain).deliver!(rails_message)
     end
 
