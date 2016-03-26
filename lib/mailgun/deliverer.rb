@@ -16,7 +16,10 @@ module Mailgun
     end
 
     def deliver!(rails_message)
-      response = mailgun_client.send_message build_mailgun_message_for(rails_message)
+      client = mailgun_client
+      client.domain = extract_domain(rails_message) if domain.to_s == 'auto'
+      response = client.send_message build_mailgun_message_for(rails_message)
+
       if response.code == 200
         mailgun_message_id = JSON.parse(response.to_str)["id"]
         rails_message.message_id = mailgun_message_id
@@ -91,6 +94,10 @@ module Mailgun
       else
         rails_message.content_type =~ /text\/plain/ ? rails_message.body.decoded : nil
       end
+    end
+
+    def extract_domain(rails_message)
+      rails_message[:from].to_s.split("@").last
     end
 
     def transform_mailgun_variables(rails_message, mailgun_message)
