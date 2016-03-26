@@ -97,7 +97,7 @@ module Mailgun
     end
 
     def extract_domain(rails_message)
-      rails_message[:from].to_s.split("@").last
+      rails_message[:from].to_s[/@(.+?)>?\z/,1]
     end
 
     def transform_mailgun_variables(rails_message, mailgun_message)

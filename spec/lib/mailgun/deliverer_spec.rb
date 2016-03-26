@@ -124,6 +124,13 @@ describe Mailgun::Deliverer do
         expectation = { to: ['to@email.com'], from: ['from@email.com']}
         check_mailgun_message msg, expectation
       end
+
+      it "should auto detect domain when domain is more complex" do
+        msg = Mail::Message.new(to: 'to@email.com', from: 'My Name <from@email.com>')
+        mailgun_client.should_receive(:domain=).with("email.com")
+        expectation = { to: ['to@email.com'], from: ['My Name <from@email.com>']}
+        check_mailgun_message msg, expectation
+      end
     end
 
     def check_mailgun_message(rails_message, mailgun_message)
