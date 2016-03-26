@@ -56,6 +56,16 @@ To provide option parameters like `o:campaign` or `o:tag`.
 email.mailgun_options = {campaign: '1'}
 ```
 
+### Sending from multiple domains
+
+Set the `domain` setting to `auto` to automatically set the Mailgun domain based on the from address.
+
+```ruby
+config.action_mailer.delivery_method = :mailgun
+config.action_mailer.mailgun_settings = {
+		api_key: '<mailgun api key>',
+		domain: :auto
+}
+```
+
 Pull requests are welcomed
-
-
