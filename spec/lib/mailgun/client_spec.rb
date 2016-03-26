@@ -10,5 +10,12 @@ describe Mailgun::Client do
       RestClient.should_receive(:post).with(expected_url, foo: :bar)
       client.send_message foo: :bar
     end
+
+    it "should use custom set domain" do
+      expected_url = "https://api:some_api_key@api.mailgun.net/v3/email.com/messages"
+      RestClient.should_receive(:post).with(expected_url, foo: :bar)
+      client.domain = "email.com"
+      client.send_message foo: :bar
+    end
   end
 end

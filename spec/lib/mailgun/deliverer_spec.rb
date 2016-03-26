@@ -115,6 +115,24 @@ describe Mailgun::Deliverer do
       msg.message_id.should eq "20111114174239.25659.5817@samples.mailgun.org"
     end
 
+    context "with domain on auto detect" do
+      let(:domain) { :auto }
+
+      it "should auto detect domain when domain is set to auto" do
+        msg = Mail::Message.new(to: 'to@email.com', from: 'from@email.com')
+        mailgun_client.should_receive(:domain=).with("email.com")
+        expectation = { to: ['to@email.com'], from: ['from@email.com']}
+        check_mailgun_message msg, expectation
+      end
+
+      it "should auto detect domain when domain is more complex" do
+        msg = Mail::Message.new(to: 'to@email.com', from: 'My Name <from@email.com>')
+        mailgun_client.should_receive(:domain=).with("email.com")
+        expectation = { to: ['to@email.com'], from: ['My Name <from@email.com>']}
+        check_mailgun_message msg, expectation
+      end
+    end
+
     def check_mailgun_message(rails_message, mailgun_message)
       rest_response = double(:code => 200, :to_str => '{"message": "Queued. Thank you.","id": "<20111114174239.25659.5817@samples.mailgun.org>"}')
       mailgun_client.should_receive(:send_message).with(mailgun_message).and_return(rest_response)

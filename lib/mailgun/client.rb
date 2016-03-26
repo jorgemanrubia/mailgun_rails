@@ -3,7 +3,8 @@ require 'rest_client'
 
 module Mailgun
   class Client
-    attr_reader :api_key, :domain
+    attr_reader :api_key
+    attr_accessor :domain
 
     def initialize(api_key, domain)
       @api_key = api_key
