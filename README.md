@@ -28,6 +28,8 @@ Now you can send emails using plain Action Mailer:
 
 ```ruby
 email = mail from: 'sender@email.com', to: 'receiver@email.com', subject: 'this is an email'
+or 
+email = mail from: 'Your Name Here <sender@email.com>', to: 'receiver@email.com', subject: 'this is an email'
 ```
 
 ### [Mailgun variables](http://documentation.mailgun.com/user_manual.html#attaching-data-to-messages)
