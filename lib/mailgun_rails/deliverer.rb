@@ -1,4 +1,4 @@
-module Mailgun
+module MailgunRails
   class Deliverer
 
     attr_accessor :settings
@@ -63,9 +63,9 @@ module Mailgun
       rails_message.attachments.each do |attachment|
         # then add as a file object
         if attachment.inline?
-          mailgun_message[:inline] << Mailgun::Attachment.new(attachment, encoding: 'ascii-8bit', inline: true)
+          mailgun_message[:inline] << MailgunRails::Attachment.new(attachment, encoding: 'ascii-8bit', inline: true)
         else
-          mailgun_message[:attachment] << Mailgun::Attachment.new(attachment, encoding: 'ascii-8bit')
+          mailgun_message[:attachment] << MailgunRails::Attachment.new(attachment, encoding: 'ascii-8bit')
         end
       end
 
@@ -125,4 +125,4 @@ module Mailgun
   end
 end
 
-ActionMailer::Base.add_delivery_method :mailgun, Mailgun::Deliverer
+ActionMailer::Base.add_delivery_method :mailgun, MailgunRails::Deliverer
