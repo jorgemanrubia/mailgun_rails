@@ -4,5 +4,5 @@ require 'json'
 
 Dir[File.dirname(__FILE__) + '/mailgun/*.rb'].each {|file| require file }
 
-module Mailgun
+module MailgunRails
 end

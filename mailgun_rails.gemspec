@@ -6,7 +6,7 @@ require "mailgun/version"
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
   s.name        = "mailgun_rails"
-  s.version     = Mailgun::VERSION
+  s.version     = MailgunRails::VERSION
   s.authors     = ["Jorge Manrubia"]
   s.email       = ["jorge.manrubia@gmail.com"]
   s.homepage    = "https://github.com/jorgemanrubia/mailgun_rails/"

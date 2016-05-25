@@ -1,7 +1,7 @@
 require 'rest_client'
 
 
-module Mailgun
+module MailgunRails
   class Client
     attr_reader :api_key, :domain
 
