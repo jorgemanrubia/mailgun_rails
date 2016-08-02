@@ -78,6 +78,26 @@ describe Mailgun::Deliverer do
       check_mailgun_message msg, expectation
     end
 
+    it "should include to if present" do
+      msg = Mail::Message.new(to: 'to@email.com',
+                              from: 'from@email.com',
+                              bcc: 'bcc@email.com')
+      expectation = { to: ['to@email.com'],
+                      from: ['from@email.com'],
+                      bcc: ['bcc@email.com'] }
+      check_mailgun_message msg, expectation
+
+    end
+
+    it "should not include to if present" do
+      msg = Mail::Message.new(from: 'from@email.com',
+                              bcc: 'bcc@email.com')
+      expectation = { from: ['from@email.com'],
+                      bcc: ['bcc@email.com'] }
+      check_mailgun_message msg, expectation
+
+    end
+
 
     it 'should include attachment' do
       rails_message = rails_message_with_attachment

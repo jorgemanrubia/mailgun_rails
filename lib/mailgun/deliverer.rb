@@ -45,13 +45,12 @@ module Mailgun
     def build_basic_mailgun_message_for(rails_message)
       mailgun_message = {
        from: rails_message[:from].formatted,
-       to: rails_message[:to].formatted,
        subject: rails_message.subject,
        html: extract_html(rails_message),
        text: extract_text(rails_message)
       }
 
-      [:cc, :bcc].each do |key|
+      [:to, :cc, :bcc].each do |key|
         mailgun_message[key] = rails_message[key].formatted if rails_message[key]
       end
 
