@@ -11,9 +11,9 @@ module Mailgun
     end
 
     def send_message(options)
-      response = RestClient.post mailgun_url, options
-      puts response
-      response
+      RestClient.post mailgun_url, options
+    rescue => e
+      puts "MAILGUN FAILED: #{e.response.body}"
     end
 
     def mailgun_url
