@@ -11,7 +11,9 @@ module Mailgun
     end
 
     def send_message(options)
-      RestClient.post mailgun_url, options
+      response = RestClient.post mailgun_url, options
+      puts response
+      response
     end
 
     def mailgun_url
