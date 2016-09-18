@@ -2,19 +2,26 @@ language: ruby
 sudo: false
 cache: bundler
 rvm:
-  - 1.9
-  - 2.0
-  - 2.1
-  - 2.2
-  - jruby
+  - 2.2.2
+  - 2.2.3
+  - 2.2.4
+  - 2.2.5
+  - 2.3.0
+  - 2.3.1
+  # - jruby-1.7.20
+  # - jruby-9.0.0.0
   - rbx
 matrix:
   include:
-    - rvm: 2.2
+    - rvm: 2.2.5
       gemfile: .gemfiles/rails3_2.gemfile
-    - rvm: 2.2
+    - rvm: 2.3.1
       gemfile: .gemfiles/rails4_0.gemfile
-    - rvm: 2.2
+    - rvm: 2.3.1
       gemfile: .gemfiles/rails4_1.gemfile
+    - rvm: 2.3.1
+      gemfile: .gemfiles/rails4_2.gemfile
+    - rvm: 2.3.1
+      gemfile: .gemfiles/rails5_0.gemfile
   allow_failures:
     - rvm: rbx
