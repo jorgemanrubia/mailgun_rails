@@ -15,6 +15,11 @@ module Mailgun
       self.settings[:api_key]
     end
 
+    def verify_ssl
+      #default value = true
+      self.settings[:verify_ssl] != false
+    end
+
     def deliver!(rails_message)
       response = mailgun_client.send_message build_mailgun_message_for(rails_message)
       if response.code == 200
@@ -120,7 +125,7 @@ module Mailgun
     end
 
     def mailgun_client
-      @mailgun_client ||= Client.new(api_key, domain)
+      @maingun_client ||= Client.new(api_key, domain, verify_ssl)
     end
   end
 end
