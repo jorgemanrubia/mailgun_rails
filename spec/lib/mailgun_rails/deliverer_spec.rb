@@ -1,17 +1,17 @@
 require 'spec_helper'
-require 'mailgun/deliverer'
-require 'mailgun/client'
+require 'mailgun_rails/deliverer'
+require 'mailgun_rails/client'
 require 'json'
 
 
-describe Mailgun::Deliverer do
+describe MailgunRails::Deliverer do
   describe "#deliver" do
     let(:api_key) { :some_api_key }
     let(:domain) { :some_domain }
-    let(:mailgun_client) { double(Mailgun::Client) }
+    let(:mailgun_client) { double(MailgunRails::Client) }
 
     before(:each) do
-      Mailgun::Client.stub(:new).with(api_key, domain, true).and_return mailgun_client
+      MailgunRails::Client.stub(:new).with(api_key, domain, true).and_return mailgun_client
     end
 
     it 'should invoke mailgun message transforming the basic email properties' do
@@ -81,8 +81,8 @@ describe Mailgun::Deliverer do
 
     it 'should include attachment' do
       rails_message = rails_message_with_attachment
-      attachment = double(Mailgun::Attachment)
-      Mailgun::Attachment.stub(:new).with(rails_message.attachments.first, encoding: 'ascii-8bit').and_return attachment
+      attachment = double(MailgunRails::Attachment)
+      MailgunRails::Attachment.stub(:new).with(rails_message.attachments.first, encoding: 'ascii-8bit').and_return attachment
       expectation = basic_expected_mailgun_message.merge({inline: []})
       expectation[:attachment] = [attachment]
       check_mailgun_message rails_message, expectation
@@ -90,8 +90,8 @@ describe Mailgun::Deliverer do
 
     it 'should include inline attachment' do
       rails_message = rails_message_with_inline_attachment
-      attachment = double(Mailgun::Attachment)
-      Mailgun::Attachment.stub(:new).with(rails_message.attachments.first, encoding: 'ascii-8bit', inline: true).and_return attachment
+      attachment = double(MailgunRails::Attachment)
+      MailgunRails::Attachment.stub(:new).with(rails_message.attachments.first, encoding: 'ascii-8bit', inline: true).and_return attachment
       expectation = basic_expected_mailgun_message.merge({attachment: []})
       expectation[:inline] = [attachment]
       check_mailgun_message rails_message, expectation
@@ -99,9 +99,9 @@ describe Mailgun::Deliverer do
 
     it 'should include attachment of both types' do
       rails_message = rails_message_with_both_types_attachments
-      attachment = double(Mailgun::Attachment)
-      Mailgun::Attachment.stub(:new).with(rails_message.attachments.first, encoding: 'ascii-8bit', inline: true).and_return attachment
-      Mailgun::Attachment.stub(:new).with(rails_message.attachments.last, encoding: 'ascii-8bit').and_return attachment
+      attachment = double(MailgunRails::Attachment)
+      MailgunRails::Attachment.stub(:new).with(rails_message.attachments.first, encoding: 'ascii-8bit', inline: true).and_return attachment
+      MailgunRails::Attachment.stub(:new).with(rails_message.attachments.last, encoding: 'ascii-8bit').and_return attachment
       expectation = basic_expected_mailgun_message
       expectation[:inline] = [attachment]
       expectation[:attachment] = [attachment]
@@ -118,7 +118,7 @@ describe Mailgun::Deliverer do
     def check_mailgun_message(rails_message, mailgun_message)
       rest_response = double(:code => 200, :to_str => '{"message": "Queued. Thank you.","id": "<20111114174239.25659.5817@samples.mailgun.org>"}')
       mailgun_client.should_receive(:send_message).with(mailgun_message).and_return(rest_response)
-      Mailgun::Deliverer.new(api_key: api_key, domain: domain).deliver!(rails_message)
+      MailgunRails::Deliverer.new(api_key: api_key, domain: domain).deliver!(rails_message)
     end
 
     def rails_message_with_attachment

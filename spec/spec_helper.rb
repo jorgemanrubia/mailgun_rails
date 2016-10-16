@@ -5,7 +5,7 @@
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
-require 'mailgun/mail_ext'
+require 'mailgun_rails/mail_ext'
 
 require 'action_mailer'
 

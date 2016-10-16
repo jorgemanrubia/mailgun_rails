@@ -1,9 +1,8 @@
 require 'spec_helper'
-require 'mailgun/client'
+require 'mailgun_rails/client'
 
-describe Mailgun::Client do
-  let(:client){ Mailgun::Client.new(:some_api_key, :some_domain) }
-  let(:rest_client) { double(RestClient::Request) }
+describe MailgunRails::Client do
+  let(:client){MailgunRails::Client.new(:some_api_key, :some_domain)}
 
   describe "#send_message" do
     it 'should make a POST rest request passing the parameters to the mailgun end point' do
