@@ -46,6 +46,15 @@ describe MailgunRails::Deliverer do
       check_mailgun_message text_rails_message_with_names, basic_expected_mailgun_message.except(:html).merge(emails_with_names)
     end
 
+    it "should not include cc if empty array" do
+      msg = Mail::Message.new(to: 'to@email.com',
+                              from: 'from@email.com',
+                              cc: [])
+      expectation = { to: ['to@email.com'],
+                      from: ['from@email.com'] }
+      check_mailgun_message msg, expectation
+    end
+
     it "should include cc if present" do
       msg = Mail::Message.new(to: 'to@email.com',
                               from: 'from@email.com',
@@ -54,7 +63,6 @@ describe MailgunRails::Deliverer do
                       from: ['from@email.com'],
                       cc: ['cc@email.com'] }
       check_mailgun_message msg, expectation
-
     end
 
     it "should include bcc if present" do
@@ -65,7 +73,6 @@ describe MailgunRails::Deliverer do
                       from: ['from@email.com'],
                       bcc: ['bcc@email.com'] }
       check_mailgun_message msg, expectation
-
     end
 
     it 'should include reply-to name in custom header' do
@@ -83,7 +90,7 @@ describe MailgunRails::Deliverer do
       rails_message = rails_message_with_attachment
       attachment = double(MailgunRails::Attachment)
       MailgunRails::Attachment.stub(:new).with(rails_message.attachments.first, encoding: 'ascii-8bit').and_return attachment
-      expectation = basic_expected_mailgun_message.merge({inline: []})
+      expectation = basic_expected_mailgun_message
       expectation[:attachment] = [attachment]
       check_mailgun_message rails_message, expectation
     end
@@ -92,7 +99,7 @@ describe MailgunRails::Deliverer do
       rails_message = rails_message_with_inline_attachment
       attachment = double(MailgunRails::Attachment)
       MailgunRails::Attachment.stub(:new).with(rails_message.attachments.first, encoding: 'ascii-8bit', inline: true).and_return attachment
-      expectation = basic_expected_mailgun_message.merge({attachment: []})
+      expectation = basic_expected_mailgun_message
       expectation[:inline] = [attachment]
       check_mailgun_message rails_message, expectation
     end
