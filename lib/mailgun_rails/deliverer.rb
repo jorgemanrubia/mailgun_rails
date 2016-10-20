@@ -121,7 +121,8 @@ module MailgunRails
     end
 
     def remove_empty_values(mailgun_message)
-      mailgun_message.delete_if { |key, value| value.nil? }
+      mailgun_message.delete_if { |key, value| value.nil? or
+                                               value.respond_to?(:empty?) && value.empty? }
     end
 
     def mailgun_client
