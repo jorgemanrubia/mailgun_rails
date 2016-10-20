@@ -21,7 +21,13 @@ module MailgunRails
     end
 
     def deliver!(rails_message)
-      response = mailgun_client.send_message build_mailgun_message_for(rails_message)
+      begin
+        response = mailgun_client.send_message build_mailgun_message_for(rails_message)
+      rescue RestClient::Exception => mailgun_error
+        json = JSON.parse(mailgun_error.http_body.to_s) rescue raise(mailgun_error)
+        mailgun_error.define_singleton_method(:message) { json["message"] }
+        raise mailgun_error
+      end
       if response.code == 200
         mailgun_message_id = JSON.parse(response.to_str)["id"]
         rails_message.message_id = mailgun_message_id

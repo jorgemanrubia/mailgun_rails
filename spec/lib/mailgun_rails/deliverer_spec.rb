@@ -122,10 +122,28 @@ describe MailgunRails::Deliverer do
       msg.message_id.should eq "20111114174239.25659.5817@samples.mailgun.org"
     end
 
+    it "should include the error message returned from Mailgun in the Ruby exception message" do
+      msg = Mail::Message.new(to: [], cc: 'cc@email.com', from: 'from@email.com')
+      expectation = { to: [], cc: ['cc@email.com'], from: ['from@email.com']}
+      check_mailgun_error msg, expectation, RestClient::BadRequest, "'to' parameter is missing"
+    end
+
     def check_mailgun_message(rails_message, mailgun_message)
       rest_response = double(:code => 200, :to_str => '{"message": "Queued. Thank you.","id": "<20111114174239.25659.5817@samples.mailgun.org>"}')
       mailgun_client.should_receive(:send_message).with(mailgun_message).and_return(rest_response)
       MailgunRails::Deliverer.new(api_key: api_key, domain: domain).deliver!(rails_message)
+    end
+
+    def check_mailgun_error(rails_message, mailgun_message, exception, message)
+      body = %{{"message": #{JSON.dump message}}}
+      response = double(code: 400, body: body)
+      exception = exception.new(response)
+      allow(mailgun_client).to receive(:send_message).and_raise(exception)
+      expect {
+        MailgunRails::Deliverer.new(api_key: api_key, domain: domain).deliver!(rails_message)
+      }.to raise_exception(RestClient::BadRequest) {|exception|
+        expect(exception.message).to eq message
+      }
     end
 
     def rails_message_with_attachment
