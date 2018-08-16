@@ -23,6 +23,7 @@ config.action_mailer.mailgun_settings = {
 		domain: '<mailgun domain>'
 }
 ```
+To select EU region add the `region: 'eu'` to `mailgun_settings`.
 
 Now you can send emails using plain Action Mailer:
 
